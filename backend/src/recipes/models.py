@@ -5,7 +5,7 @@ from users.models import User
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        model=User,
+        User,
         related_name='recipes',
         on_delete=models.CASCADE
     )
@@ -29,20 +29,47 @@ class Ingredient(models.Model):
         default=GRAM
     )
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=255)
     hex_code = models.CharField(max_length=7)
     slug = models.CharField(max_length=16)
-    
+
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
-        model=Recipe,
+        Recipe,
         related_name='ingredients',
         on_delete=models.CASCADE
     )
     ingredient = models.ForeignKey(
-        model=Ingredient,
+        Ingredient,
         related_name='recipes',
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE
+    )
+
+
+class RecipeTag(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        related_name='recipe_tags',
+        on_delete=models.CASCADE
+    )
+    tag = models.ForeignKey(
+        Tag,
+        related_name='tag_recipes',
+        on_delete=models.CASCADE
+    )
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='favorites',
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        related_name='users_liked',
+        on_delete=models.CASCADE
     )

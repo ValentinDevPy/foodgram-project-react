@@ -6,12 +6,12 @@ User = get_user_model()
 
 class Subscribe(models.Model):
     subscriber = models.ForeignKey(
-        model=User,
+        User,
         related_name='subscribes',
         on_delete=models.CASCADE
     )
     subscribed_for = models.ForeignKey(
-        model=User,
-        related_name='subscribes',
-        on_delete=models.CASCADE
+        User,
+        related_name='subscribed_for',
+        on_delete=models.CASCADE,
     )
