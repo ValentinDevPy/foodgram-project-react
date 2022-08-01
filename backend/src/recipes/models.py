@@ -6,9 +6,8 @@ from users.models import User
 class Recipe(models.Model):
     author = models.ForeignKey(
         User,
-        related_name='recipes',
-        on_delete=models.CASCADE
-    )
+        related_name="recipes",
+        on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     image = models.ImageField()
     text = models.TextField()
@@ -16,17 +15,12 @@ class Recipe(models.Model):
 
 
 class Ingredient(models.Model):
-    GRAM = 'гр'
-    KILOGRAM = 'кг'
-    MEASUREMENT_UNIT_CHOICES = [
-        (GRAM, 'граммы'),
-        (KILOGRAM, 'килограммы')
-    ]
+    GRAM = "гр"
+    KILOGRAM = "кг"
+    MEASUREMENT_UNIT_CHOICES = [(GRAM, "граммы"), (KILOGRAM, "килограммы")]
     name = models.CharField(max_length=255)
     measurement_unit = models.CharField(
-        max_length=2,
-        choices=MEASUREMENT_UNIT_CHOICES,
-        default=GRAM
+        max_length=2, choices=MEASUREMENT_UNIT_CHOICES, default=GRAM
     )
 
 
@@ -38,38 +32,28 @@ class Tag(models.Model):
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
-        Recipe,
-        related_name='ingredients',
-        on_delete=models.CASCADE
+        Recipe, related_name="ingredients", on_delete=models.CASCADE
     )
     ingredient = models.ForeignKey(
-        Ingredient,
-        related_name='recipes',
-        on_delete=models.CASCADE
+        Ingredient, related_name="recipes", on_delete=models.CASCADE
     )
 
 
 class RecipeTag(models.Model):
     recipe = models.ForeignKey(
-        Recipe,
-        related_name='recipe_tags',
-        on_delete=models.CASCADE
+        Recipe, related_name="recipe_tags", on_delete=models.CASCADE
     )
     tag = models.ForeignKey(
         Tag,
-        related_name='tag_recipes',
-        on_delete=models.CASCADE
-    )
+        related_name="tag_recipes",
+        on_delete=models.CASCADE)
 
 
 class Favorite(models.Model):
     user = models.ForeignKey(
         User,
-        related_name='favorites',
-        on_delete=models.CASCADE
-    )
+        related_name="favorites",
+        on_delete=models.CASCADE)
     recipe = models.ForeignKey(
-        Recipe,
-        related_name='users_liked',
-        on_delete=models.CASCADE
+        Recipe, related_name="users_liked", on_delete=models.CASCADE
     )
