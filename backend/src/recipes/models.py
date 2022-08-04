@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -11,22 +12,17 @@ class Recipe(models.Model):
     name = models.CharField(max_length=255)
     image = models.ImageField()
     text = models.TextField()
-    cooking_time = models.FloatField()
+    cooking_time = models.FloatField(validators=[MinValueValidator(1)])
 
 
 class Ingredient(models.Model):
-    GRAM = "гр"
-    KILOGRAM = "кг"
-    MEASUREMENT_UNIT_CHOICES = [(GRAM, "граммы"), (KILOGRAM, "килограммы")]
     name = models.CharField(max_length=255)
-    measurement_unit = models.CharField(
-        max_length=2, choices=MEASUREMENT_UNIT_CHOICES, default=GRAM
-    )
+    measurement_unit = models.CharField(max_length=100)
 
 
 class Tag(models.Model):
     name = models.CharField(max_length=255)
-    hex_code = models.CharField(max_length=7)
+    color = models.CharField(max_length=7)
     slug = models.CharField(max_length=16)
 
 

@@ -85,7 +85,6 @@ class SetPasswordSerializer(serializers.Serializer):
         user = self.context["request"].user or self.user
         if user is None:
             raise ValidationError("Internal error")
-        
         try:
             validate_password(attrs["new_password"], user)
         except ValidationError as e:

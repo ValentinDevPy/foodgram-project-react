@@ -4,18 +4,17 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = "django-insecure-bx&ehn2k*e55tb0m+suhz&7#)s*5u-186ouyq@2nv9ezsrh-gz"
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-STATIC_URL = "/api/static/"
-MEDIA_URL = "/api/media/"
+STATIC_URL = "/django_static/"
+MEDIA_URL = "/django_media/"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -25,6 +24,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt",
     "djoser",
     "users.apps.UsersConfig",
     "recipes.apps.RecipesConfig",
@@ -92,16 +93,13 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-}
+DJOSER = {"LOGIN_FIELD": "email"}
 
 LANGUAGE_CODE = "ru"
 
