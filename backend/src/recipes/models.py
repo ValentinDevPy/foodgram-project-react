@@ -33,15 +33,16 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient, related_name="recipes", on_delete=models.CASCADE
     )
+    amount = models.FloatField(validators=[MinValueValidator(0)])
 
 
 class RecipeTag(models.Model):
     recipe = models.ForeignKey(
-        Recipe, related_name="recipe_tags", on_delete=models.CASCADE
+        Recipe, related_name="tags", on_delete=models.CASCADE
     )
     tag = models.ForeignKey(
         Tag,
-        related_name="tag_recipes",
+        related_name="recipes",
         on_delete=models.CASCADE)
 
 
