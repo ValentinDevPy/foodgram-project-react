@@ -1,9 +1,9 @@
-from rest_framework import serializers, status
-from rest_framework.response import Response
+from rest_framework import serializers
 
-from recipes.models import Tag, Recipe, Ingredient, RecipeIngredient, RecipeTag
+from drf_extra_fields.fields import Base64ImageField
+
+from recipes.models import Tag, Ingredient, Recipe, RecipeIngredient
 from users.api.serializers import UserSerializer
-from recipes.api.fields import Base64ImageField
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -26,11 +26,26 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         fields = ("id", "amount")
 
 
+class RecipeIngredientReadSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(source='ingredient',
+                                            read_only=True)
+    name = serializers.SlugRelatedField(slug_field='name',
+                                        source='ingredient',
+                                        read_only=True)
+    measurement_unit = serializers.SlugRelatedField(
+        slug_field='measurement_unit',
+        source='ingredient', read_only=True
+    )
+    
+    class Meta:
+        model = RecipeIngredient
+        fields = ("id", "name", "measurement_unit", "amount")
+
+
 class RecipeReadSerializer(serializers.ModelSerializer):
-    tags = serializers.SerializerMethodField()
-    author = UserSerializer(read_only=True)
+    author = UserSerializer()
     ingredients = serializers.SerializerMethodField()
-    cooking_time = serializers.IntegerField(min_value=0)
+    tags = TagSerializer(many=True, read_only=True)
     
     class Meta:
         model = Recipe
@@ -45,17 +60,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             "text",
         )
     
-    def get_tags(self, obj):
-        return TagSerializer(
-            Tag.objects.filter(recipes__recipe_id=obj.id),
-            many=True
-        ).data
-    
     def get_ingredients(self, obj):
-        return IngredientSerializer(
-            Ingredient.objects.filter(recipes__recipe_id=obj.id),
-            many=True
-        ).data
+        recipe = obj
+        queryset = recipe.recipe_ingredients.all()
+        return RecipeIngredientReadSerializer(queryset, many=True).data
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
@@ -63,9 +71,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         read_only=True, default=serializers.CurrentUserDefault()
     )
     ingredients = RecipeIngredientSerializer(many=True)
-    tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(), many=True
-    )
     image = Base64ImageField()
     
     class Meta:
@@ -73,26 +78,21 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         fields = "__all__"
     
     @staticmethod
-    def create_tags_and_ingredients(recipe, ingredients, tags):
+    def create_recipe_ingredients(ingredients, recipe):
         for ingredient in ingredients:
             RecipeIngredient.objects.create(
-                recipe_id=recipe.id, ingredient_id=ingredient["id"].id, amount=ingredient["amount"]
+                recipe_id=recipe.id,
+                ingredient_id=ingredient["id"].id,
+                amount=ingredient["amount"],
             )
-        
-        for tag in tags:
-            RecipeTag.objects.create(
-                recipe_id=recipe.id, tag_id=tag.id
-            )
+    
+    def to_representation(self, instance):
+        serializer = RecipeReadSerializer(instance)
+        return serializer.data
     
     def create(self, validated_data):
         validated_data["author"] = self.context["request"].user
         ingredients = validated_data.pop("ingredients", None)
-        tags = validated_data.pop("tags", None)
-        recipe = super().create(validated_data)
-        self.create_tags_and_ingredients(recipe, ingredients, tags)
+        recipe = super(RecipeCreateSerializer, self).create(validated_data)
+        self.create_recipe_ingredients(ingredients, recipe)
         return recipe
-
-    def to_representation(self, obj):
-        data = RecipeReadSerializer(data=self.validated_data).is_valid(raise_exception=True)
-        data['image'] = obj.image.url
-        return data
