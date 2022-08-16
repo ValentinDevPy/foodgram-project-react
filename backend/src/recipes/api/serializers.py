@@ -83,8 +83,17 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             RecipeIngredient.objects.create(
                 recipe_id=recipe.id,
                 ingredient_id=ingredient["id"].id,
-                amount=ingredient["amount"],
+                amount=ingredient["amount"]
             )
+    
+    @staticmethod
+    def update_recipe_ingredients(ingredients, recipe):
+        for ingredient in ingredients:
+            recipe_ingredient = RecipeIngredient.objects.get(
+                recipe_id=recipe.id,
+                ingredient_id=ingredient["id"].id,
+            )
+            recipe_ingredient.amount = ingredient["amount"]
     
     def to_representation(self, instance):
         serializer = RecipeReadSerializer(instance)
@@ -96,3 +105,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe = super(RecipeCreateSerializer, self).create(validated_data)
         self.create_recipe_ingredients(ingredients, recipe)
         return recipe
+    
+    def update(self, instance, validated_data):
+        ingredients_data = validated_data.pop('ingredients')
+        self.update_recipe_ingredients(ingredients_data, instance)
+        instance.name = validated_data.pop('name')
+        instance.text = validated_data.pop('text')
+        instance.cooking_time = validated_data.pop('cooking_time')
+        instance.tags = validated_data.pop('tags')
+        if validated_data.get('image') is not None:
+            instance.image = validated_data.pop('image')
+        instance.save()
+        return instance

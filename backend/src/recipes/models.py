@@ -21,7 +21,7 @@ class Recipe(models.Model):
         related_name="recipes",
         on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    image = models.ImageField()
+    image = models.ImageField(upload_to='recipes/')
     text = models.TextField()
     cooking_time = models.FloatField(validators=[MinValueValidator(1)])
     tags = models.ManyToManyField(Tag, related_name="tags")
@@ -35,7 +35,7 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient, related_name="ingredient_recipes", on_delete=models.CASCADE
     )
-    amount = models.FloatField(validators=[MinValueValidator(0)])
+    amount = models.FloatField(validators=[MinValueValidator(0)], default=1)
 
 
 class Favorite(models.Model):
