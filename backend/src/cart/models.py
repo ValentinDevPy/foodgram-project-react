@@ -13,3 +13,8 @@ class Cart(models.Model):
         Recipe,
         related_name="in_cart",
         on_delete=models.CASCADE)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'], name='unique cart object')
+        ]

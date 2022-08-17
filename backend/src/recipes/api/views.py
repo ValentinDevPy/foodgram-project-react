@@ -1,6 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, viewsets
-from rest_framework.decorators import action
+from rest_framework import mixins, viewsets
 
 from recipes.api.filters import RecipeFilter, IngredientSeacrh
 from recipes.api.serializers import (
@@ -9,6 +8,7 @@ from recipes.api.serializers import (
     RecipeReadSerializer, TagSerializer
 )
 from recipes.models import Ingredient, Recipe, Tag
+
 
 
 class TagViewSet(
@@ -30,10 +30,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action == "list" or self.action == "retrieve":
             return RecipeReadSerializer
         return RecipeCreateSerializer
-    
-    @action(methods=["post", "delete"], detail=True)
-    def shopping_cart(self, request, pk=None):
-        pass
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
