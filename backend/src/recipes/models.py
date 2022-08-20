@@ -36,6 +36,9 @@ class RecipeIngredient(models.Model):
         Ingredient, related_name="ingredient_recipes", on_delete=models.CASCADE
     )
     amount = models.FloatField(validators=[MinValueValidator(0)], default=1)
+    
+    class Meta:
+        unique_together = ("recipe", "ingredient")
 
 
 class Favorite(models.Model):
@@ -46,3 +49,6 @@ class Favorite(models.Model):
     recipe = models.ForeignKey(
         Recipe, related_name="users_liked", on_delete=models.CASCADE
     )
+    
+    class Meta:
+        unique_together = ("user", "recipe")

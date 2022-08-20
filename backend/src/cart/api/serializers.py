@@ -4,7 +4,7 @@ from cart.models import Cart
 from recipes.models import Recipe
 
 
-class RecipeInCartSerializer(serializers.ModelSerializer):
+class ShortRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ("id", "name", "image", "cooking_time")
@@ -19,6 +19,6 @@ class CreateCartObjectSerializer(serializers.ModelSerializer):
         fields = ["user_id", "recipe_id"]
     
     def to_representation(self, instance):
-        serializer = RecipeInCartSerializer(instance.recipe)
+        serializer = ShortRecipeSerializer(instance.recipe)
         return serializer.data
     
