@@ -3,8 +3,11 @@ from rest_framework import serializers
 
 from cart.models import Cart
 from recipes.models import Favorite, Ingredient, Recipe, RecipeIngredient, Tag
-from recipes.services import (bulk_create_recipe_ingredients, is_in_model,
-                              update_recipe_instance)
+from recipes.services import (
+    bulk_create_recipe_ingredients,
+    is_in_model,
+    update_recipe_instance,
+)
 from users.api.serializers import UserSerializer
 
 
@@ -29,7 +32,8 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(source="ingredient", read_only=True)
+    id = serializers.PrimaryKeyRelatedField(
+        source="ingredient", read_only=True)
     name = serializers.SlugRelatedField(
         slug_field="name", source="ingredient", read_only=True
     )

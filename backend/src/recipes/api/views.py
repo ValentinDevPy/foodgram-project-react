@@ -1,4 +1,5 @@
 from django.db import IntegrityError
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
@@ -9,10 +10,14 @@ from rest_framework.response import Response
 
 from cart.api.serializers import ShortRecipeSerializer
 from recipes.api.filters import IngredientSeacrh, RecipeFilter
-from recipes.api.serializers import (IngredientSerializer,
-                                     RecipeCreateSerializer,
-                                     RecipeReadSerializer, TagSerializer)
+from recipes.api.serializers import (
+    IngredientSerializer,
+    RecipeCreateSerializer,
+    RecipeReadSerializer,
+    TagSerializer,
+)
 from recipes.models import Favorite, Ingredient, Recipe, Tag
+from recipes.services import get_shopping_list_txt
 
 
 class TagViewSet(
@@ -41,7 +46,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return RecipeCreateSerializer
 
     @action(methods=["post", "delete"], detail=True,
-            permission_classes=[IsAuthenticated])
+            permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
         user_id = request.user.id
@@ -66,6 +71,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 favorite_object.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, permission_classes=(IsAuthenticated,))
+    def download_shopping_cart(self, request):
+        ingredient_txt = get_shopping_list_txt(request.user.id)
+        filename = "shoplist.txt"
+        response = HttpResponse(ingredient_txt, content_type="text/plain")
+        response["Content-Disposition"] = f"attachment; filename={filename}"
+        return response
 
 
 class IngredientViewSet(

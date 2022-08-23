@@ -20,7 +20,10 @@ class ShoppingCartView(APIView):
         serializer = CreateCartObjectSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             try:
-                serializer.save(user_id=data["user_id"], recipe_id=data["recipe_id"])
+                serializer.save(
+                    user_id=data["user_id"],
+                    recipe_id=data["recipe_id"]
+                )
             except IntegrityError:
                 raise ValidationError({"error": "Already in cart."})
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)

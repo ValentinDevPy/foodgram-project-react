@@ -21,7 +21,13 @@ class UserSerializer(serializers.ModelSerializer):
         return is_subscribed
 
     class Meta:
-        fields = ("email", "id", "username", "first_name", "last_name", "is_subscribed")
+        fields = (
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed")
         model = User
 
 
@@ -44,7 +50,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         style={"input_type": "password"}, write_only=True, max_length=150
     )
 
-    default_error_messages = {"cannot_create_user": "Cannot create user. Try again."}
+    default_error_messages = {
+        "cannot_create_user": "Cannot create user. Try again."}
 
     class Meta:
         model = User
@@ -98,7 +105,8 @@ class SetPasswordSerializer(serializers.Serializer):
         try:
             validate_password(attrs["new_password"], user)
         except ValidationError as e:
-            raise serializers.ValidationError({"new_password": list(e.messages)})
+            raise serializers.ValidationError(
+                {"new_password": list(e.messages)})
         return super().validate(attrs)
 
     def validate_current_password(self, value):
@@ -115,7 +123,8 @@ class SubscribeReadSerializer(serializers.ModelSerializer):
     email = serializers.SlugRelatedField(
         read_only=True, source=SOURCE_FIELD, slug_field="email"
     )
-    id = serializers.PrimaryKeyRelatedField(read_only=True, source=SOURCE_FIELD)
+    id = serializers.PrimaryKeyRelatedField(
+        read_only=True, source=SOURCE_FIELD)
     username = serializers.SlugRelatedField(
         read_only=True, source=SOURCE_FIELD, slug_field="username"
     )

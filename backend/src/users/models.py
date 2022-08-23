@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 User = get_user_model()
@@ -15,9 +14,19 @@ class Subscribe(models.Model):
         on_delete=models.CASCADE,
     )
 
+    def __str__(self):
+
+        return f"Пользователь {self.subscriber} " \
+               f"подписан на {self.subscribed_for}"
+
     class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
         constraints = [
             models.UniqueConstraint(
-                fields=["subscriber", "subscribed_for"], name="unique subscribe object"
+                fields=[
+                    "subscriber",
+                    "subscribed_for"],
+                name="unique subscribe object"
             )
         ]
