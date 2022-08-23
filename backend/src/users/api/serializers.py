@@ -2,6 +2,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.db import IntegrityError, transaction
 from rest_framework import serializers, validators
 from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueTogetherValidator
 
 from cart.api.serializers import ShortRecipeSerializer
 from recipes.models import Recipe
@@ -11,7 +12,7 @@ from users.models import Subscribe, User
 
 class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
-
+    
     def get_is_subscribed(self, obj):
         subscriber_id = self.context["request"].user.id
         is_subscribed = Subscribe.objects.filter(
@@ -19,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             subscribed_for_id=obj.id,
         ).exists()
         return is_subscribed
-
+    
     class Meta:
         fields = (
             "email",
@@ -49,10 +50,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={"input_type": "password"}, write_only=True, max_length=150
     )
-
+    
     default_error_messages = {
         "cannot_create_user": "Cannot create user. Try again."}
-
+    
     class Meta:
         model = User
         fields = (
@@ -63,11 +64,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "last_name",
             "password",
         )
-
+    
     def validate(self, attrs):
         user = User(**attrs)
         password = attrs.get("password")
-
+        
         try:
             validate_password(password, user)
         except ValidationError as e:
@@ -75,16 +76,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"password": serializer_error["non_field_errors"]}
             )
-
+        
         return attrs
-
+    
     def create(self, validated_data):
         try:
             user = self.perform_create(validated_data)
         except IntegrityError:
             self.fail("cannot_create_user")
         return user
-
+    
     @staticmethod
     def perform_create(validated_data):
         with transaction.atomic():
@@ -95,9 +96,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class SetPasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(style={"input_type": "password"})
     new_password = serializers.CharField(style={"input_type": "password"})
-
+    
     default_error_messages = {"invalid_password": "Invalid password!"}
-
+    
     def validate(self, attrs):
         user = self.context["request"].user or self.user
         if user is None:
@@ -108,7 +109,7 @@ class SetPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {"new_password": list(e.messages)})
         return super().validate(attrs)
-
+    
     def validate_current_password(self, value):
         is_password_valid = self.context["request"].user.check_password(value)
         if is_password_valid:
@@ -119,7 +120,7 @@ class SetPasswordSerializer(serializers.Serializer):
 
 class SubscribeReadSerializer(serializers.ModelSerializer):
     SOURCE_FIELD = "subscribed_for"
-
+    
     email = serializers.SlugRelatedField(
         read_only=True, source=SOURCE_FIELD, slug_field="email"
     )
@@ -137,7 +138,7 @@ class SubscribeReadSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
-
+    
     def get_is_subscribed(self, obj):
         subscriber_id = self.context["request"].user.id
         is_subscribed = Subscribe.objects.filter(
@@ -145,15 +146,15 @@ class SubscribeReadSerializer(serializers.ModelSerializer):
             subscribed_for_id=obj.subscribed_for_id,
         ).exists()
         return is_subscribed
-
+    
     def get_recipes(self, obj):
         return ShortRecipeSerializer(
             Recipe.objects.filter(author_id=obj.subscribed_for.id), many=True
         ).data
-
+    
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author_id=obj.subscribed_for.id).count()
-
+    
     class Meta:
         model = Subscribe
         fields = (
@@ -169,15 +170,23 @@ class SubscribeReadSerializer(serializers.ModelSerializer):
 
 
 class SubscribeCreateSerializer(serializers.ModelSerializer):
-    subscriber = serializers.PrimaryKeyRelatedField(read_only=True)
-    subscribed_for = serializers.PrimaryKeyRelatedField(read_only=True)
-
     def to_representation(self, instance):
         serializer = SubscribeReadSerializer(
             instance, context={"request": self.context["request"]}
         )
         return serializer.data
-
+    
+    def validate(self, attrs):
+        if attrs["subscriber"] == attrs["subscribed_for"]:
+            raise serializers.ValidationError({"error": "Can`t subscribe on yourself!"})
+        return attrs
+    
     class Meta:
         model = Subscribe
-        fields = ("subscriber", "subscribed_for")
+        fields = "__all__"
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscribe.objects.all(),
+                fields=['subscriber', 'subscribed_for']
+            )
+        ]

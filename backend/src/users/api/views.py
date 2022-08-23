@@ -48,36 +48,23 @@ class UserViewSet(
         serializer = SetPasswordSerializer(
             data=request.data, context={"request": request}
         )
-        if serializer.is_valid(raise_exception=True):
-            user.set_password(serializer.data.get("new_password"))
-            user.save()
-            return Response(
-                {"status": "password set"}, status=status.HTTP_204_NO_CONTENT
-            )
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        user.set_password(serializer.data.get("new_password"))
+        user.save()
+        return Response(
+            {"status": "password set"}, status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class SubscribeView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, user_id):
-        if request.user.id == user_id:
-            return Response(ValidationError(
-                {"error": "Can`t subscribe on yourself!"}))
-
-        data = {"subscriber_id": request.user.id, "subscribed_for_id": user_id}
+        data = {"subscriber": request.user.id, "subscribed_for": user_id}
         serializer = SubscribeCreateSerializer(
             data=data, context={"request": request})
-        if serializer.is_valid(raise_exception=True):
-            try:
-                serializer.save(
-                    subscriber_id=data["subscriber_id"],
-                    subscribed_for_id=data["subscribed_for_id"],
-                )
-            except IntegrityError:
-                raise ValidationError({"error": "Already subscribed!"})
-
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, user_id):
@@ -103,6 +90,6 @@ class SubscribeListView(generics.ListAPIView):
         recipes_limit = self.request.query_params.get("recipes_limit")
         subscribes = Subscribe.objects.filter(subscriber_id=user_id)
         if recipes_limit:
-            return subscribes[: int(recipes_limit)]
+            return subscribes[:int(recipes_limit)]
         else:
             return subscribes

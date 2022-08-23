@@ -1,12 +1,13 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from cart.models import Cart
 from recipes.models import Favorite, Ingredient, Recipe, RecipeIngredient, Tag
 from recipes.services import (
     bulk_create_recipe_ingredients,
     is_in_model,
-    update_recipe_instance,
+    update_recipe_ingredients,
 )
 from users.api.serializers import UserSerializer
 
@@ -92,11 +93,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = "__all__"
 
-    @staticmethod
-    def update_recipe_ingredients(ingredients, recipe):
-        RecipeIngredient.objects.filter(recipe_id=recipe.id).delete()
-        bulk_create_recipe_ingredients(ingredients, recipe)
-
     def to_representation(self, instance):
         serializer = RecipeReadSerializer(
             instance, context={"request": self.context["request"]}
@@ -107,9 +103,18 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         validated_data["author"] = self.context["request"].user
         ingredients = validated_data.pop("ingredients", None)
         recipe = super(RecipeCreateSerializer, self).create(validated_data)
-        bulk_create_recipe_ingredients(ingredients, recipe)
+        if ingredients:
+            bulk_create_recipe_ingredients(ingredients, recipe)
         return recipe
 
     def update(self, instance, validated_data):
-        instance = update_recipe_instance(self, instance, validated_data)
-        return instance
+        if instance.author != self.context["request"].user:
+            raise ValidationError({"error": "You cant edit foreign recipe!"})
+        ingredients = validated_data.pop("ingredients", None)
+        if ingredients:
+            update_recipe_ingredients(ingredients, instance)
+        updated_instance = (
+            super(RecipeCreateSerializer, self)
+            .update(instance, validated_data)
+        )
+        return updated_instance

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from cart.models import Cart
 from recipes.models import Recipe
@@ -11,13 +12,16 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 
 
 class CreateCartObjectSerializer(serializers.ModelSerializer):
-    user_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    recipe_id = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         model = Cart
-        fields = ["user_id", "recipe_id"]
-
+        fields = "__all__"
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Cart.objects.all(),
+                fields=['recipe', 'user']
+            )
+        ]
+    
     def to_representation(self, instance):
-        serializer = ShortRecipeSerializer(instance.recipe)
+        serializer = ShortRecipeSerializer(instance.recipe, context={"request": self.context["request"]})
         return serializer.data

@@ -27,20 +27,9 @@ def is_in_model(user_id: int, obj: Recipe,
     return in_model
 
 
-def update_recipe_instance(
-        self,
-        instance: Recipe,
-        validated_data: dict) -> Recipe:
-    ingredients_data = validated_data.pop("ingredients")
-    self.update_recipe_ingredients(ingredients_data, instance)
-    instance.name = validated_data.pop("name")
-    instance.text = validated_data.pop("text")
-    instance.cooking_time = validated_data.pop("cooking_time")
-    instance.tags.set(validated_data.pop("tags"))
-    if validated_data.get("image") is not None:
-        instance.image = validated_data.pop("image")
-    instance.save()
-    return instance
+def update_recipe_ingredients(ingredients, recipe):
+    RecipeIngredient.objects.filter(recipe_id=recipe.id).delete()
+    bulk_create_recipe_ingredients(ingredients, recipe)
 
 
 def get_shopping_list_txt(user_id: int) -> list:
