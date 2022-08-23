@@ -27,27 +27,25 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    
+
     def get_permissions(self):
-        if self.action in SAFE_METHODS:
+        if self.request.method in SAFE_METHODS:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
-    
+
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return RecipeReadSerializer
         return RecipeCreateSerializer
-    
-    @action(
-        methods=["post", "delete"], detail=True,
-        permission_classes=[IsAuthenticated]
-    )
+
+    @action(methods=["post", "delete"], detail=True,
+            permission_classes=[IsAuthenticated])
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
         user_id = request.user.id
-        
+
         if request.method == "POST":
             try:
                 Favorite.objects.create(
@@ -59,17 +57,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
             instance = Recipe.objects.get(pk=pk)
             response_data = ShortRecipeSerializer(instance=instance).data
             return Response(data=response_data, status=status.HTTP_201_CREATED)
-        
+
         elif request.method == "DELETE":
             favorite_object = Favorite.objects.filter(
-                user_id=user_id, recipe_id=recipe.id)
+                user_id=user_id, recipe_id=recipe.id
+            )
             if favorite_object.exists():
                 favorite_object.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class IngredientViewSet(viewsets.ModelViewSet):
+class IngredientViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None

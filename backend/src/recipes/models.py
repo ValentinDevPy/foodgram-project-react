@@ -16,16 +16,16 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(
-        User,
-        related_name="recipes",
-        on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name="recipes", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    image = models.ImageField(upload_to='recipes/')
+    image = models.ImageField(upload_to="recipes/")
     text = models.TextField()
     cooking_time = models.FloatField(validators=[MinValueValidator(1)])
     tags = models.ManyToManyField(Tag, related_name="tags")
-    ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient')
+    ingredients = models.ManyToManyField(Ingredient, through="RecipeIngredient")
+    
+    class Meta:
+        ordering = ["-id"]
 
 
 class RecipeIngredient(models.Model):
@@ -36,19 +36,16 @@ class RecipeIngredient(models.Model):
         Ingredient, related_name="ingredient_recipes", on_delete=models.CASCADE
     )
     amount = models.FloatField(validators=[MinValueValidator(0)], default=1)
-    
+
     class Meta:
         unique_together = ("recipe", "ingredient")
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(
-        User,
-        related_name="favorites",
-        on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="users_liked", on_delete=models.CASCADE)
     recipe = models.ForeignKey(
-        Recipe, related_name="users_liked", on_delete=models.CASCADE
+        Recipe, related_name="favorites", on_delete=models.CASCADE
     )
-    
+
     class Meta:
         unique_together = ("user", "recipe")

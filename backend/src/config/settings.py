@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,6 +15,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 STATIC_URL = "/django_static/"
 MEDIA_URL = "/django_media/"
 
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -25,11 +25,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
-    
     "rest_framework_simplejwt",
     "django_filters",
     "djoser",
-    
     "users.apps.UsersConfig",
     "recipes.apps.RecipesConfig",
     "cart.apps.CartConfig",
