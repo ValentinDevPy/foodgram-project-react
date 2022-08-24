@@ -19,7 +19,6 @@ urlpatterns = [
             [
                 path("admin/", admin.site.urls),
                 path("", include("users.api.urls")),
-                path("", include("cart.api.urls")),
                 path("", include("recipes.api.urls")),
                 path("", include(router.urls)),
             ]),
