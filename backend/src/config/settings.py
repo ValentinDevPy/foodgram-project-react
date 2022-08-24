@@ -17,6 +17,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 STATIC_URL = "/django_static/"
 MEDIA_URL = "/django_media/"
 
+AUTH_USER_MODEL = "users.User"
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
