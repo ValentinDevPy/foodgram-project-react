@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-from users.models import User
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-bx&ehn2k*e55tb0m+suhz&7#)s*5u-186ouyq@2nv9ezsrh-gz"
