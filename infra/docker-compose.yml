@@ -13,7 +13,7 @@ services:
       - ./.env
 
   web:
-    image: valentindevpy/foodgram:latest
+    image: valentindevpy/foodgram-backend:latest
     platform: linux/x86_64
     restart: always
     volumes:
