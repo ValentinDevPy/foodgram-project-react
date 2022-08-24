@@ -14,8 +14,6 @@ ALLOWED_HOSTS = ["127.0.0.1", "158.160.2.224", "localhost"]
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-AUTH_USER_MODEL = "users.User"
-
 STATIC_URL = "/django_static/"
 MEDIA_URL = "/django_media/"
 
