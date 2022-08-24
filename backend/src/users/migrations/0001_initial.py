@@ -43,5 +43,15 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
+            options={
+                "verbose_name": "Подписка",
+                "verbose_name_plural": "Подписки",
+            },
+        ),
+        migrations.AddConstraint(
+            model_name="subscribe",
+            constraint=models.UniqueConstraint(
+                fields=("subscriber", "subscribed_for"), name="unique subscribe object"
+            ),
         ),
     ]
