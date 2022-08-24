@@ -4,15 +4,13 @@ services:
   frontend:
     image: valentindevpy/foodgram-front:latest
     volumes:
-      - ../frontend/:/app/result_build/
+      - result_build:/app/result_build/build
   db:
     image: postgres:13.0-alpine
     volumes:
       - /var/lib/postgresql/data/
     env_file:
       - ./.env
-    ports:
-      - "5432:5432"
   web:
     image: valentindevpy/foodgram:latest
     platform: linux/x86_64
@@ -34,10 +32,11 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - static_value:/var/html/django_static/
       - media_value:/var/html/django_media/
-      - ../frontend/build:/usr/share/nginx/html/
+      - result_build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
     depends_on:
       - web
 volumes:
   static_value:
   media_value:
+  result_build:
