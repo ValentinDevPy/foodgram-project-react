@@ -10,6 +10,8 @@ from recipes.models import Recipe
 
 
 class ShoppingCartView(APIView):
+    """Логика работы корзины."""
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request, recipe_id):
