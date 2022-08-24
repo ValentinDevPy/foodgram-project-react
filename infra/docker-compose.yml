@@ -18,7 +18,6 @@ services:
     platform: linux/x86_64
     restart: always
     volumes:
-      - ../backend/src:/app
       - static_value:/app/static/
       - media_value:/app/media/
     depends_on:
