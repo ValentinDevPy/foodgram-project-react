@@ -11,14 +11,15 @@ from recipes.models import Recipe
 
 class ShoppingCartView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request, recipe_id):
         data = {"user": request.user.id, "recipe": recipe_id}
-        serializer = CreateCartObjectSerializer(data=data, context={"request": request})
+        serializer = CreateCartObjectSerializer(
+            data=data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-    
+
     def delete(self, request, recipe_id):
         user_id = request.user.id
         recipe = get_object_or_404(Recipe, id=recipe_id)

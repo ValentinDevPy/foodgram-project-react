@@ -4,11 +4,8 @@ from rest_framework.exceptions import ValidationError
 
 from cart.models import Cart
 from recipes.models import Favorite, Ingredient, Recipe, RecipeIngredient, Tag
-from recipes.services import (
-    bulk_create_recipe_ingredients,
-    is_in_model,
-    update_recipe_ingredients,
-)
+from recipes.services import (bulk_create_recipe_ingredients, is_in_model,
+                              update_recipe_ingredients)
 from users.api.serializers import UserSerializer
 
 

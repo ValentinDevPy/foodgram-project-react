@@ -21,7 +21,10 @@ class CreateCartObjectSerializer(serializers.ModelSerializer):
                 fields=['recipe', 'user']
             )
         ]
-    
+
     def to_representation(self, instance):
-        serializer = ShortRecipeSerializer(instance.recipe, context={"request": self.context["request"]})
+        serializer = ShortRecipeSerializer(
+            instance.recipe, context={
+                "request": self.context["request"]}
+        )
         return serializer.data

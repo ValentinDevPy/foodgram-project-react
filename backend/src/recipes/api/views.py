@@ -10,12 +10,9 @@ from rest_framework.response import Response
 
 from cart.api.serializers import ShortRecipeSerializer
 from recipes.api.filters import IngredientSeacrh, RecipeFilter
-from recipes.api.serializers import (
-    IngredientSerializer,
-    RecipeCreateSerializer,
-    RecipeReadSerializer,
-    TagSerializer,
-)
+from recipes.api.serializers import (IngredientSerializer,
+                                     RecipeCreateSerializer,
+                                     RecipeReadSerializer, TagSerializer)
 from recipes.models import Favorite, Ingredient, Recipe, Tag
 from recipes.services import get_shopping_list_txt
 

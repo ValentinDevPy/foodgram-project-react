@@ -41,7 +41,9 @@ class Recipe(models.Model):
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to="recipes/")
     text = models.TextField()
-    cooking_time = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    cooking_time = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)]
+    )
     tags = models.ManyToManyField(Tag, related_name="tags")
     ingredients = models.ManyToManyField(
         Ingredient, through="RecipeIngredient")
@@ -66,7 +68,9 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient, related_name="ingredient_recipes", on_delete=models.CASCADE
     )
-    amount = models.PositiveIntegerField(validators=[MinValueValidator(1)], default=1)
+    amount = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)], default=1
+    )
 
     def __str__(self):
         return f"В рецепте {self.recipe.name} " \

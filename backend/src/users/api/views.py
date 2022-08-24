@@ -1,19 +1,14 @@
-from django.db import IntegrityError
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.api.serializers import (
-    SetPasswordSerializer,
-    SubscribeCreateSerializer,
-    SubscribeReadSerializer,
-    UserCreateSerializer,
-    UserSerializer,
-)
+from users.api.serializers import (SetPasswordSerializer,
+                                   SubscribeCreateSerializer,
+                                   SubscribeReadSerializer,
+                                   UserCreateSerializer, UserSerializer)
 from users.models import Subscribe, User
 
 
