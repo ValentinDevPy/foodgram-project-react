@@ -2,6 +2,9 @@ version: '3.8'
 services:
 
   frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     platform: linux/x86_64
     image: valentindevpy/foodgram-front:latest
     volumes:
