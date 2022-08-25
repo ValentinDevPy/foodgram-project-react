@@ -6,12 +6,10 @@ from recipes.models import Recipe, Tag
 
 class RecipeFilter(django_filters.FilterSet):
     tags = django_filters.ModelMultipleChoiceFilter(
-        field_name="tags__slug",
-        queryset=Tag.objects.all(),
-        to_field_name="slug")
+        field_name="tags__slug", queryset=Tag.objects.all(), to_field_name="slug"
+    )
     is_favorited = django_filters.BooleanFilter(method="get_is_favorited")
-    is_in_shopping_cart = django_filters.BooleanFilter(
-        method="get_is_in_shopping_cart")
+    is_in_shopping_cart = django_filters.BooleanFilter(method="get_is_in_shopping_cart")
 
     class Meta:
         model = Recipe

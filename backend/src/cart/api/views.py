@@ -16,8 +16,7 @@ class ShoppingCartView(APIView):
 
     def post(self, request, recipe_id):
         data = {"user": request.user.id, "recipe": recipe_id}
-        serializer = CreateCartObjectSerializer(
-            data=data, context={"request": request})
+        serializer = CreateCartObjectSerializer(data=data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)

@@ -46,9 +46,7 @@ class UserViewSet(
         serializer.is_valid(raise_exception=True)
         user.set_password(serializer.data.get("new_password"))
         user.save()
-        return Response(
-            {"status": "password set"}, status=status.HTTP_204_NO_CONTENT
-        )
+        return Response({"status": "password set"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class SubscribeView(APIView):
@@ -56,8 +54,7 @@ class SubscribeView(APIView):
 
     def post(self, request, user_id):
         data = {"subscriber": request.user.id, "subscribed_for": user_id}
-        serializer = SubscribeCreateSerializer(
-            data=data, context={"request": request})
+        serializer = SubscribeCreateSerializer(data=data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
@@ -85,6 +82,6 @@ class SubscribeListView(generics.ListAPIView):
         recipes_limit = self.request.query_params.get("recipes_limit")
         subscribes = Subscribe.objects.filter(subscriber_id=user_id)
         if recipes_limit:
-            return subscribes[:int(recipes_limit)]
+            return subscribes[: int(recipes_limit)]
         else:
             return subscribes

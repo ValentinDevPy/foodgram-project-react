@@ -21,5 +21,7 @@ urlpatterns = [
                 path("", include("users.api.urls")),
                 path("", include("recipes.api.urls")),
                 path("", include(router.urls)),
-            ]),
-    )]
+            ]
+        ),
+    )
+]

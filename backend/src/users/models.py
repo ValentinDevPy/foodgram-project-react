@@ -16,17 +16,13 @@ class Subscribe(models.Model):
 
     def __str__(self):
 
-        return f"Пользователь {self.subscriber} " \
-               f"подписан на {self.subscribed_for}"
+        return f"Пользователь {self.subscriber} " f"подписан на {self.subscribed_for}"
 
     class Meta:
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
         constraints = [
             models.UniqueConstraint(
-                fields=[
-                    "subscriber",
-                    "subscribed_for"],
-                name="unique subscribe object"
+                fields=["subscriber", "subscribed_for"], name="unique subscribe object"
             )
         ]

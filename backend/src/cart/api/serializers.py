@@ -17,14 +17,12 @@ class CreateCartObjectSerializer(serializers.ModelSerializer):
         fields = "__all__"
         validators = [
             UniqueTogetherValidator(
-                queryset=Cart.objects.all(),
-                fields=['recipe', 'user']
+                queryset=Cart.objects.all(), fields=["recipe", "user"]
             )
         ]
 
     def to_representation(self, instance):
         serializer = ShortRecipeSerializer(
-            instance.recipe, context={
-                "request": self.context["request"]}
+            instance.recipe, context={"request": self.context["request"]}
         )
         return serializer.data

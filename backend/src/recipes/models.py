@@ -34,19 +34,13 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(
-        User,
-        related_name="recipes",
-        on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name="recipes", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to="recipes/")
     text = models.TextField()
-    cooking_time = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)]
-    )
+    cooking_time = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     tags = models.ManyToManyField(Tag, related_name="tags")
-    ingredients = models.ManyToManyField(
-        Ingredient, through="RecipeIngredient")
+    ingredients = models.ManyToManyField(Ingredient, through="RecipeIngredient")
 
     @property
     def added_to_favorite(self):
@@ -68,13 +62,10 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient, related_name="ingredient_recipes", on_delete=models.CASCADE
     )
-    amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)], default=1
-    )
+    amount = models.PositiveIntegerField(validators=[MinValueValidator(1)], default=1)
 
     def __str__(self):
-        return f"В рецепте {self.recipe.name} " \
-               f"необходим {self.ingredient.name}."
+        return f"В рецепте {self.recipe.name} " f"необходим {self.ingredient.name}."
 
     class Meta:
         unique_together = ("recipe", "ingredient")
@@ -83,10 +74,7 @@ class RecipeIngredient(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(
-        User,
-        related_name="users_liked",
-        on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="users_liked", on_delete=models.CASCADE)
     recipe = models.ForeignKey(
         Recipe, related_name="favorites", on_delete=models.CASCADE
     )

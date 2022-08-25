@@ -20,8 +20,7 @@ def bulk_create_recipe_ingredients(ingredients, recipe: Recipe) -> None:
     )
 
 
-def is_in_model(user_id: int, obj: Recipe,
-                model: Type[Union[Favorite, Cart]]) -> bool:
+def is_in_model(user_id: int, obj: Recipe, model: Type[Union[Favorite, Cart]]) -> bool:
     """Проверяем, существует ли такой объект в моделях Favorite или Cart."""
     in_model = model.objects.filter(recipe_id=obj.id, user_id=user_id).exists()
     return in_model
@@ -34,8 +33,7 @@ def update_recipe_ingredients(ingredients, recipe):
 
 def get_shopping_list_txt(user_id: int) -> list:
     ingredients = (
-        Recipe.objects
-        .filter(in_cart__user_id=user_id)
+        Recipe.objects.filter(in_cart__user_id=user_id)
         .select_related("ingredients", "recipe_ingredients")
         .values("ingredients__name", "ingredients__measurement_unit")
         .annotate(sum=Sum("recipe_ingredients__amount"))

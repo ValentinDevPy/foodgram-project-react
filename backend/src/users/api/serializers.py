@@ -22,13 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
         return is_subscribed
 
     class Meta:
-        fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "is_subscribed")
+        fields = ("email", "id", "username", "first_name", "last_name", "is_subscribed")
         model = User
 
 
@@ -51,8 +45,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         style={"input_type": "password"}, write_only=True, max_length=150
     )
 
-    default_error_messages = {
-        "cannot_create_user": "Cannot create user. Try again."}
+    default_error_messages = {"cannot_create_user": "Cannot create user. Try again."}
 
     class Meta:
         model = User
@@ -112,8 +105,7 @@ class SubscribeReadSerializer(serializers.ModelSerializer):
     email = serializers.SlugRelatedField(
         read_only=True, source=SOURCE_FIELD, slug_field="email"
     )
-    id = serializers.PrimaryKeyRelatedField(
-        read_only=True, source=SOURCE_FIELD)
+    id = serializers.PrimaryKeyRelatedField(read_only=True, source=SOURCE_FIELD)
     username = serializers.SlugRelatedField(
         read_only=True, source=SOURCE_FIELD, slug_field="username"
     )
@@ -166,8 +158,7 @@ class SubscribeCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["subscriber"] == attrs["subscribed_for"]:
-            raise serializers.ValidationError(
-                {"error": "Can`t subscribe on yourself!"})
+            raise serializers.ValidationError({"error": "Can`t subscribe on yourself!"})
         return attrs
 
     class Meta:
@@ -176,6 +167,6 @@ class SubscribeCreateSerializer(serializers.ModelSerializer):
         validators = [
             UniqueTogetherValidator(
                 queryset=Subscribe.objects.all(),
-                fields=['subscriber', 'subscribed_for']
+                fields=["subscriber", "subscribed_for"],
             )
         ]

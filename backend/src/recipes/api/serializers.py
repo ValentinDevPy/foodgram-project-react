@@ -30,8 +30,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        source="ingredient", read_only=True)
+    id = serializers.PrimaryKeyRelatedField(source="ingredient", read_only=True)
     name = serializers.SlugRelatedField(
         slug_field="name", source="ingredient", read_only=True
     )
@@ -110,8 +109,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop("ingredients", None)
         if ingredients:
             update_recipe_ingredients(ingredients, instance)
-        updated_instance = (
-            super(RecipeCreateSerializer, self)
-            .update(instance, validated_data)
+        updated_instance = super(RecipeCreateSerializer, self).update(
+            instance, validated_data
         )
         return updated_instance
