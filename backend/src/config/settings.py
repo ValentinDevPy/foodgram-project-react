@@ -7,7 +7,7 @@ SECRET_KEY = "django-insecure-bx&ehn2k*e55tb0m+suhz&7#)s*5u-186ouyq@2nv9ezsrh-gz
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["127.0.0.1", "158.160.2.224", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "158.160.2.224", "foodgram-valentin.ddns.net"]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
