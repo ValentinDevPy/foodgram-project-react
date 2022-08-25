@@ -2,6 +2,7 @@ version: '3.8'
 services:
 
   frontend:
+    platform: linux/x86_64
     image: valentindevpy/foodgram-front:latest
     volumes:
       - result_build:/app/result_build/build/
