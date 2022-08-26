@@ -79,9 +79,5 @@ class SubscribeListView(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.request.user.id
-        recipes_limit = self.request.query_params.get("recipes_limit")
         subscribes = Subscribe.objects.filter(subscriber_id=user_id)
-        if recipes_limit:
-            return subscribes[: int(recipes_limit)]
-        else:
-            return subscribes
+        return subscribes
