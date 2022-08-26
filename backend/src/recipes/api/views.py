@@ -46,8 +46,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if request.method == "POST":
             if Favorite.objects.filter(user_id=user_id, recipe_id=recipe.id).exists():
                 raise ValidationError({"error": "already liked."})
-            instance = Recipe.objects.get(pk=pk)
-            response_data = ShortRecipeSerializer(instance=instance).data
+            Favorite.objects.create(
+                user_id=user_id,
+                recipe_id=recipe.id,
+            )
+            response_data = ShortRecipeSerializer(instance=recipe).data
             return Response(data=response_data, status=status.HTTP_201_CREATED)
 
         if request.method == "DELETE":
