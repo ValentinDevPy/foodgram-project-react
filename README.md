@@ -1,5 +1,5 @@
 # Foodgram - продуктовый помощник
-![example workflow](https://github.com/ValentinDevPy/foodgram-project-reactactions/workflows/main.yml/badge.svg)  
+![workflow](https://github.com/ValentinDevPy/foodgram-project-react/actions/workflows/main.yml/badge.svg)  
 
 ## Стек технологий
 [![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
