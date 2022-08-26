@@ -10,4 +10,4 @@ class UserAdminCustom(UserAdmin):
 
 admin.site.register(Subscribe)
 admin.site.unregister(User)
-admin.site.register(User,UserAdminCustom)
+admin.site.register(User, UserAdminCustom)
