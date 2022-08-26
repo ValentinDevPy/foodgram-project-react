@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-bx&ehn2k*e55tb0m+suhz&7#)s*5u-186ouyq@2nv9ezsrh-gz"
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["localhost", "foodgram-valentin.ddns.net", "http://158.160.2.224/"]
 CSRF_TRUSTED_ORIGINS = ['https://*.foodgram-valentin.ddns.net', 'https://*.127.0.0.1']
